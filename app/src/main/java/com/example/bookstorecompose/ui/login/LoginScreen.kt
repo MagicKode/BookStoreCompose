@@ -1,11 +1,14 @@
 package com.example.bookstorecompose.ui.login
 
-import android.util.Log
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -14,15 +17,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.google.firebase.Firebase
-import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
+import androidx.compose.ui.unit.sp
+import com.example.bookstorecompose.R
+import com.example.bookstorecompose.ui.theme.BoxFilterColor
 
 @Composable
 fun LoginScreen() {
-    val auth = Firebase.auth
 
     val emailState = remember {
         mutableStateOf("")
@@ -30,82 +36,65 @@ fun LoginScreen() {
     val passwordState = remember {
         mutableStateOf("")
     }
-    Log.d("MyLog", "User email: ${auth.currentUser?.email}")  //Проверка с каким Email зашёл юзер
-    Column(
+
+    Image(
+        painter = painterResource(id = R.drawable.bg_image),
+        contentDescription = "bg",
         modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(BoxFilterColor)
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+                start = 40.dp, end = 40.dp
+            ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        TextField(value = emailState.value, onValueChange = {
+        Image(
+            painter = painterResource(id = R.drawable.books_logo),
+            contentDescription = "Logo"
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = "Book Store",
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            fontSize = 30.sp,
+            fontFamily = FontFamily.Serif
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        RoundedCornerTextField(             //создаём кастомные поля ввода с закруглением
+            text = emailState.value,
+            label = "Email"
+        ) {
             emailState.value = it
-        })
+        }
         Spacer(modifier = Modifier.height(10.dp))
-        TextField(value = passwordState.value, onValueChange = {
+        RoundedCornerTextField(             //создаём кастомные поля ввода с закруглением
+            text = passwordState.value,
+            label = "Password"
+        ) {
             passwordState.value = it
-        })
+        }
         Spacer(modifier = Modifier.height(10.dp))
 
-        Button(onClick = {                                          //ф-я Входа в аккаунт
-            signIn(auth, emailState.value, passwordState.value)
-        }) {
-            Text(text = "Sign In")
-        }
+        LoginButton(text = "Sign In") {
 
-        Button(onClick = {                                          //ф-я Регистрации аккаунта
-            signUp(auth, emailState.value, passwordState.value)
-        }) {
-            Text(text = "Sign Up")
-        }
+        }                                         //ф-я Входа в аккаунт
 
-        Button(onClick = {                                          //ф-я Выход из аккаунта
-            signOut(auth)
-        }) {
-            Text(text = "Sign Out")
-        }
 
-        Button(onClick = {                                          //ф-я Выход из аккаунта
-            deleteAccount(auth, emailState.value, passwordState.value)
-        }) {
-            Text(text = "Delete account")
-        }
+        LoginButton(text = "Sign Up") {
 
-    }
-}
+        }                                          //ф-я Регистрации аккаунта
 
-private fun signUp(auth: FirebaseAuth, email: String, password: String) {
-    auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
-        if (it.isSuccessful) {
-            Log.d("MyLog", "Sign Up successful!")
-        } else {
-            Log.d("MyLog", "Sign Up failure!")
-        }
-    }
-}
-
-private fun signIn(auth: FirebaseAuth, email: String, password: String) {
-    auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-        if (it.isSuccessful) {
-            Log.d("MyLog", "Sign In successful!")
-        } else {
-            Log.d("MyLog", "Sign In failure!")
-        }
-    }
-}
-
-private fun signOut(auth: FirebaseAuth) {
-    auth.signOut()
-    Log.d("MyLog", "Sign Out successful!")
-}
-
-private fun deleteAccount(auth: FirebaseAuth, email: String, password: String) {
-    val credential = EmailAuthProvider.getCredential(email, password)
-    auth.currentUser?.reauthenticate(credential)?.addOnCompleteListener {
-        if (it.isSuccessful) {
-            auth.currentUser?.delete()?.addOnCompleteListener {
-                Log.d("MyLog", "Account deleted successful!")
-            }
-        } else {
-            Log.d("MyLog", "Account deleted failure!")
-        }
     }
 }
