@@ -23,6 +23,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bookstorecompose.R
+import com.example.bookstorecompose.ui.theme.ButtonColor
+import com.example.bookstorecompose.ui.theme.DarkBlue
 
 @Composable
 fun DrawerBody() {
@@ -33,7 +35,7 @@ fun DrawerBody() {
         "Bestsellers"
     )
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().background(ButtonColor)) {
         Image(
             painter = painterResource(id = R.drawable.bg_image),
             contentDescription = "",
