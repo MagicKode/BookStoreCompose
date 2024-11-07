@@ -1,5 +1,6 @@
 package com.example.bookstorecompose.ui.login
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,14 +23,24 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bookstorecompose.R
 import com.example.bookstorecompose.ui.theme.BoxFilterColor
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 @Composable
 fun LoginScreen() {
 
+    val auth = remember {
+        Firebase.auth
+    }
+    val errorState = remember {
+        mutableStateOf("")
+    }
     val emailState = remember {
         mutableStateOf("")
     }
@@ -87,14 +98,85 @@ fun LoginScreen() {
         }
         Spacer(modifier = Modifier.height(10.dp))
 
-        LoginButton(text = "Sign In") {
+        if (errorState.value.isNotEmpty()) {
+            Text(                           //Проверка, если поля пустые, или ошибка
+                text = errorState.value,
+                color = Color.Red,
+                textAlign = TextAlign.Center
+            )
+        }
 
-        }                                         //ф-я Входа в аккаунт
-
-
-        LoginButton(text = "Sign Up") {
-
-        }                                          //ф-я Регистрации аккаунта
-
+        LoginButton(text = "Sign In") { //ф-я Входа в аккаунт
+            signIn(
+                auth,
+                emailState.value,
+                passwordState.value,
+                onSignInSuccess = {
+                    Log.d("MyLog", "Sign In Success")
+                },
+                onSignInFailure = { error ->
+                    errorState.value = error
+                }
+            )
+        }
+        LoginButton(text = "Sign Up") {  //ф-я Регистрации аккаунта
+            signUp(
+                auth,
+                emailState.value,
+                passwordState.value,
+                onSignUpSuccess = {
+                    Log.d("MyLog", "Sign Up Success")
+                },
+                onSignUpFailure = { error ->
+                    errorState.value = error
+                }
+            )
+        }
     }
+}
+
+/**
+ * ф-я для регистрации
+ */
+fun signUp(
+    auth: FirebaseAuth,
+    email: String,
+    password: String,
+    onSignUpSuccess: () -> Unit,
+    onSignUpFailure: (String) -> Unit
+) {
+    if (email.isBlank() || password.isBlank()) {
+        onSignUpFailure("Email or Password cannot be empty!")
+        return
+    }
+    auth.createUserWithEmailAndPassword(email, password)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) onSignUpSuccess()
+        }
+        .addOnFailureListener {
+            onSignUpFailure(it.message ?: "Sign Up Error")
+        }
+}
+
+/**
+ * ф-я для входа в аккаунт
+ */
+fun signIn(
+    auth: FirebaseAuth,
+    email: String,
+    password: String,
+    onSignInSuccess: () -> Unit,
+    onSignInFailure: (String) -> Unit
+) {
+    if (email.isBlank() || password.isBlank()) {
+        onSignInFailure("Email or Password cannot be empty!")
+        return
+    }
+    auth.signInWithEmailAndPassword(email, password)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) onSignInSuccess()
+        }
+        .addOnFailureListener {
+            onSignInFailure(it.message ?: "Sign In Error")
+        }
 }

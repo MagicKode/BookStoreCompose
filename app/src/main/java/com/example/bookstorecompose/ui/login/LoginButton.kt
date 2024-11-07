@@ -23,6 +23,6 @@ fun LoginButton(
                 containerColor = ButtonColor
             )
     ) {
-        Text(text = "Sign In")
+        Text(text = text)
     }
 }
