@@ -16,6 +16,8 @@ import com.example.bookstorecompose.ui.theme.ButtonColor
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RoundedCornerTextField(
+    maxLines: Int = 1,
+    singleLine: Boolean = true,
     text: String,
     label: String,
     onValueChange: (String) -> Unit
@@ -38,6 +40,7 @@ fun RoundedCornerTextField(
         label = {
             Text(text = label, color = Color.Gray)
         },
-        singleLine = true
+        singleLine = singleLine,
+        maxLines = maxLines
     )
 }

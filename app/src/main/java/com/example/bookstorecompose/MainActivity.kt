@@ -7,6 +7,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.example.bookstorecompose.ui.add_book_screen.AddBookScreen
+import com.example.bookstorecompose.ui.data.AddScreenObject
 import com.example.bookstorecompose.ui.login.LoginScreen
 import com.example.bookstorecompose.ui.login.data.LoginScreenObject
 import com.example.bookstorecompose.ui.login.data.MainScreenDataObject
@@ -24,8 +26,7 @@ class MainActivity : ComponentActivity() {
              */
             NavHost(
                 navController = navController,
-                startDestination = LoginScreenObject
-
+                startDestination = AddScreenObject
             ) {
                 /**
                  * Для запуска Логина экрана с сохранением UID пользователя и отправки его данных, при входе
@@ -43,6 +44,9 @@ class MainActivity : ComponentActivity() {
                     val navData =
                         navEntry.toRoute<MainScreenDataObject>()  // возвращает объект данные пользователся
                     MainScreen(navData)
+                }
+                composable<AddScreenObject> { navEntry ->   //запуск экрана добавления книг
+                    AddBookScreen()
                 }
             }
         }
