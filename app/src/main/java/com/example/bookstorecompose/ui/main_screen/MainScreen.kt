@@ -11,21 +11,20 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import com.example.bookstorecompose.ui.login.data.MainScreenDataObject
 import com.example.bookstorecompose.ui.main_screen.bottom_menu.BottomMenu
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
 @Composable
-fun MainScreen() {
+fun MainScreen(navData: MainScreenDataObject) {
     val drawerState = rememberDrawerState(DrawerValue.Open)
     ModalNavigationDrawer(  // создание выдвижного меню
         drawerState = drawerState,
         modifier = Modifier.fillMaxWidth(),
         drawerContent = {
             Column(Modifier.fillMaxWidth(0.7f)) {
-                DrawerHeader()
+                DrawerHeader(navData.email)
                 DrawerBody()
             }
         }

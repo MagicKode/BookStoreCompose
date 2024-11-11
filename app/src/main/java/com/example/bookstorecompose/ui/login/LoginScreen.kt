@@ -1,6 +1,5 @@
 package com.example.bookstorecompose.ui.login
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -10,9 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,10 +42,10 @@ fun LoginScreen(
         mutableStateOf("")
     }
     val emailState = remember {
-        mutableStateOf("")
+        mutableStateOf("dmi6756@yandex.ru")   //захардкодил временно логин/пароль
     }
     val passwordState = remember {
-        mutableStateOf("")
+        mutableStateOf("123456789")
     }
 
     Image(

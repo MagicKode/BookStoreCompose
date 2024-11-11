@@ -40,9 +40,9 @@ class MainActivity : ComponentActivity() {
                  * Для запуска главного экрана с сохранением UID пользователя и отправки его данных , мпри входе
                  */
                 composable<MainScreenDataObject> { navEntry ->
-                    val mavData =
+                    val navData =
                         navEntry.toRoute<MainScreenDataObject>()  // возвращает объект данные пользователся
-                    MainScreen()
+                    MainScreen(navData)
                 }
             }
         }
