@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bookstorecompose.R
 import com.example.bookstorecompose.ui.theme.ButtonColor
+import com.example.bookstorecompose.ui.theme.ButtonColorBlue
 import com.example.bookstorecompose.ui.theme.DarkBlue
 import com.example.bookstorecompose.ui.theme.DarkTransparentBlue
 import com.google.firebase.Firebase
@@ -64,7 +65,7 @@ fun DrawerBody(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ButtonColor)
+            .background(ButtonColorBlue)
     ) {
         Image(
             painter = painterResource(id = R.drawable.bg_image),

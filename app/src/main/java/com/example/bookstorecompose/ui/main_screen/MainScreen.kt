@@ -4,6 +4,9 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalNavigationDrawer
@@ -46,7 +49,12 @@ fun MainScreen(
                 BottomMenu()
             }
         ) {
-
+            LazyVerticalGrid(   //добавление списка книг на главный экран
+                columns = GridCells.Fixed(2)) {
+                items(10) {
+                    BookListItemUi()
+                }
+            }
         }
     }
 }
