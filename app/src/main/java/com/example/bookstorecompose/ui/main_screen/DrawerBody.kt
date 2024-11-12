@@ -38,7 +38,9 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 
 @Composable
-fun DrawerBody() {
+fun DrawerBody(
+    onAdminClick: () -> Unit
+) {
     val categoriesList = listOf(
         "Favorites",
         "Fantasy",
@@ -59,9 +61,11 @@ fun DrawerBody() {
         }
     }
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(ButtonColor)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ButtonColor)
+    ) {
         Image(
             painter = painterResource(id = R.drawable.bg_image),
             contentDescription = "",
@@ -116,7 +120,9 @@ fun DrawerBody() {
                 }
             }
             if (isAdminState.value) Button(                 // добавление надписи Администратор
-                onClick = {},
+                onClick = {
+                    onAdminClick()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(5.dp),

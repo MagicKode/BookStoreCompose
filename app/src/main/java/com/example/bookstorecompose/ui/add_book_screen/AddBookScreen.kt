@@ -29,13 +29,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.bookstorecompose.R
+import com.example.bookstorecompose.data.Book
 import com.example.bookstorecompose.ui.login.LoginButton
 import com.example.bookstorecompose.ui.login.RoundedCornerTextField
 import com.example.bookstorecompose.ui.theme.BoxFilterColor
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.storage
 
 @Preview(showBackground = true)
 @Composable
-fun AddBookScreen() {
+fun AddBookScreen(
+    onSaved: () -> Unit = {}
+) {
+    var selectedCategory = "Bestsellers"
+
     val title = remember {
         mutableStateOf("")
     }
@@ -50,13 +60,21 @@ fun AddBookScreen() {
         mutableStateOf<Uri?>(null)
     }
 
+    val fireStore = remember {
+        Firebase.firestore
+    }
+
+    val storage = remember {
+        Firebase.storage
+    }
+
     /**
      * лаунчер для выбора картинок, который будет со-здавать наш URI
      */
     val imageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),  //что мы хотим вызвать , какой контент
     ) { uri ->
-    selectedImageUri.value = uri   //передаём ссылку на картинку
+        selectedImageUri.value = uri   //передаём ссылку на картинку
     }
 
     Image(
@@ -97,7 +115,11 @@ fun AddBookScreen() {
             fontSize = 25.sp,
             fontFamily = FontFamily.Serif
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(15.dp))
+        RoundedCornerDropDownMenu { selectedItem ->
+            selectedCategory = selectedItem
+        }
+        Spacer(modifier = Modifier.height(15.dp))
         RoundedCornerTextField(
             text = title.value,
             label = "Title"
@@ -126,7 +148,85 @@ fun AddBookScreen() {
             imageLauncher.launch("image/*")   //выбираем картинку с телефона
         }
         LoginButton(text = "Save") {
+            saveBookImage(
+                selectedImageUri.value!!,
+                storage,
+                fireStore,
+                Book(
+                    title = title.value,
+                    description = description.value,
+                    price = price.value,
+                    category = selectedCategory
+                ),
+                onSaved = {
+                    onSaved()
+                },
+                onError = {
 
+                }
+            )
         }
     }
+}
+
+/**
+ * при нажатии на SAVE, мы сначала
+ *  - проверяем загружаем картинку
+ *   - и после того загрузить уже текстовая часть.
+ *
+ *   Сначала нужна ссылка на картинку, и потом уже текстовуь часть, чтобы не сохранять и не обнавлять ещё раз.
+ */
+private fun saveBookImage(
+    uri: Uri,
+    storage: FirebaseStorage,
+    fireStore: FirebaseFirestore,
+    book: Book,
+    onSaved: () -> Unit,
+    onError: () -> Unit
+) {
+    val timeStamp = System.currentTimeMillis()
+    val storageRef = storage.reference    //путь, где мы будем сохранять картинку
+        .child("book_images")
+        .child("image_$timeStamp.jpg")  //нужны разные названия, чтобыч картинки не перезаписывали друг друга
+    val uploadTask = storageRef.putFile(uri)
+    uploadTask.addOnSuccessListener {
+        storageRef.downloadUrl.addOnSuccessListener { url ->
+            //сохранение текстовой части, после того, как получили ссылку
+            saveBookToFireStore(
+                fireStore,
+                url.toString(),
+                book,
+                onSaved = {
+                    onSaved()
+                },
+                onError = {
+                    onError()
+                }
+            )
+        }
+    }
+}
+
+private fun saveBookToFireStore(
+    firestore: FirebaseFirestore,
+    url: String,
+    book: Book,
+    onSaved: () -> Unit,
+    onError: () -> Unit
+) {
+    val db = firestore.collection("books")
+    val key = db.document().id
+    db.document(key)
+        .set(
+            book.copy(
+                key = key,
+                imageUrl = url
+            )
+        )
+        .addOnSuccessListener {
+            onSaved()
+        }
+        .addOnFailureListener {
+            onError()
+        }
 }

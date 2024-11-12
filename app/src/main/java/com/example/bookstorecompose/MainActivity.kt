@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
              */
             NavHost(
                 navController = navController,
-                startDestination = AddScreenObject
+                startDestination = LoginScreenObject
             ) {
                 /**
                  * Для запуска Логина экрана с сохранением UID пользователя и отправки его данных, при входе
@@ -43,10 +43,14 @@ class MainActivity : ComponentActivity() {
                 composable<MainScreenDataObject> { navEntry ->
                     val navData =
                         navEntry.toRoute<MainScreenDataObject>()  // возвращает объект данные пользователся
-                    MainScreen(navData)
+                    MainScreen(navData) {
+                        navController.navigate(AddScreenObject)
+                    }
                 }
                 composable<AddScreenObject> { navEntry ->   //запуск экрана добавления книг
-                    AddBookScreen()
+                    AddBookScreen{
+                        navController.popBackStack()
+                    }
                 }
             }
         }

@@ -1,7 +1,8 @@
 package com.example.bookstorecompose.data
 
 data class Book(
-    val name: String = "",
+    val key: String = "",
+    val title: String = "",
     val description: String = "",
     val price: String = "",
     val category: String = "",
