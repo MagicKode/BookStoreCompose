@@ -173,7 +173,6 @@ fun AddBookScreen(
  * при нажатии на SAVE, мы сначала
  *  - проверяем загружаем картинку
  *   - и после того загрузить уже текстовая часть.
- *
  *   Сначала нужна ссылка на картинку, и потом уже текстовуь часть, чтобы не сохранять и не обнавлять ещё раз.
  */
 private fun saveBookImage(
@@ -187,7 +186,7 @@ private fun saveBookImage(
     val timeStamp = System.currentTimeMillis()
     val storageRef = storage.reference    //путь, где мы будем сохранять картинку
         .child("book_images")
-        .child("image_$timeStamp.jpg")  //нужны разные названия, чтобыч картинки не перезаписывали друг друга
+        .child("image_$timeStamp.jpg")  //нужны разные названия, чтобы картинки не перезаписывали друг друга
     val uploadTask = storageRef.putFile(uri)
     uploadTask.addOnSuccessListener {
         storageRef.downloadUrl.addOnSuccessListener { url ->
